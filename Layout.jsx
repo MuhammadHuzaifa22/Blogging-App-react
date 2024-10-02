@@ -1,8 +1,14 @@
+
 import React from 'react'
+import { Outlet } from 'react-router-dom'
+import NavbarFlowbite from './src/Components/Navbar'
 
 const Layout = () => {
   return (
-    <div>Layout</div>
+    <>
+<NavbarFlowbite/>
+    <Outlet/>
+    </>
   )
 }
 
