@@ -81,9 +81,9 @@ function backToHome(){
           </div>
 
           </div>
-            {allBlogsOfThisUser.length > 0 ?  <div className='mt-[150px] flex flex-col ml-3'>
-             <h1 className='text-end text-3xl font-bold text-indigo-600 mb-5'>{allBlogsOfThisUser[0].firstName + " " + allBlogsOfThisUser[0].lastName}</h1>
-        <img src={allBlogsOfThisUser[0].userImage} alt="" className='w-[300px] h-[300px] border-[indigo] border-[1px] rounded-md ml-2'/>
+            {allBlogsOfThisUser.length > 0 ?  <div className='mt-[50px] flex flex-col ml-3'>
+             <h1 className='text-end text-3xl font-bold text-indigo-500 mb-5'>{allBlogsOfThisUser[0].firstName + " " + allBlogsOfThisUser[0].lastName}</h1>
+        <img src={allBlogsOfThisUser[0].userImage} alt="" className='w-[300px] h-[300px] border-gray-500 border-[1px] rounded-md ml-2 shadow-md'/>
         </div>
   : <h1>Loading....</h1>}
         

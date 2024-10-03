@@ -8,7 +8,6 @@ const Login = () => {
   const {
     register,
     handleSubmit,
-    watch,
     formState: { errors },
   } = useForm();
 
@@ -30,15 +29,15 @@ const Login = () => {
         console.log(user);
         alert("Login Successfull");
         Navigate(`/`);
+        setLoginButtonLoadingCondition(false);
         Form.reset();
       })
       .catch((error) => {
+        setLoginButtonLoadingCondition(false);
         const errorCode = error.code;
         const errorMessage = error.message;
-        setLoginButtonLoadingCondition(false);
         alert(errorMessage);
       });
-      setLoginButtonLoadingCondition(false);
   }
 
   function handleShowPassowrd() {
