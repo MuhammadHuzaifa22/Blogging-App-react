@@ -8,7 +8,9 @@ import {  query, where, getDocs } from "firebase/firestore";
 import { format, formatRelative } from 'date-fns';
 import { doc, updateDoc,deleteDoc  } from "firebase/firestore";
 import { toast, Toaster } from "react-hot-toast";
-
+import Swal from 'sweetalert2';
+import withReactContent from 'sweetalert2-react-content';
+import 'sweetalert2/dist/sweetalert2.min.css';
 
 
 
@@ -34,6 +36,8 @@ const Dashboard = () => {
   let [editBlogDefualtBlog,setEditBlogDefaultBlog] = useState('');
   let [editDocId,setEditDocId] = useState('');
   let [deleteDocId,setDeleteDocId] = useState('');
+  let [deleteButtonLoadingCondition,setDeleteButtonLoadingConditon] = useState(false);
+  let [editButtonLoadingCondition,setEditButtonLoadingConditon] = useState(false);
 
   const toggleMenu = (index) => {
     setActiveCardIndex(index === activeCardIndex ? null : index);
@@ -151,6 +155,7 @@ async  function editBlog(data){
     return
   }
     
+setEditButtonLoadingConditon(true);
 console.log(data.editTitle);
 console.log(data.editDescription);
 console.log(blogIndex);
@@ -167,19 +172,42 @@ allBlogsOfThisUser[blogIndex].title = data.editTitle;
 allBlogsOfThisUser[blogIndex].blog = data.editDescription;
 
 
+setEditButtonLoadingConditon(false);
 editForm.reset();
 document.getElementById('my_modal_3').close();
-showSuccessToast('Blog has been edited successfully.');
+showSuccessToast('Blog edited successfully.');
   }
 
 
+  const MySwal = withReactContent(Swal);
+
+  function showAlert(recievedIcon) {
+    MySwal.fire({
+      title: '<strong>Blog Posted!</strong>',
+      icon: recievedIcon,
+      html: `<p class="text-gray-700">Your <strong class="text-indigo-500">Blog</strong> has <strong class="text-green-500">posted successfully</strong>!</p>`,
+      showCloseButton: true, 
+      closeButtonHtml: '&times;', 
+      buttonsStyling: false,
+      customClass: {
+        popup: 'bg-white rounded-lg p-6 shadow-lg',
+        title: 'text-2xl font-bold text-indigo-600',
+        closeButton: 'text-gray-500 hover:text-red-500', // Customize the close button style with Tailwind CSS
+      },
+    });
+  }
+
+
+
 async function deleteblog(){
+  setDeleteButtonLoadingConditon(true);
 await deleteDoc(doc(db, "blogs", deleteDocId));
 allBlogsOfThisUser.splice(blogIndex,1);
 console.log(blogIndex);
 setAllBlogsOfThisUser([...allBlogsOfThisUser])
 document.getElementById('my_modal_4').close();
-showSuccessToast('Blog has been deleted successfully.')
+showSuccessToast('Blog deleted successfully.');
+setDeleteButtonLoadingConditon(false);
 }
 
 function closeModal(){
@@ -204,10 +232,10 @@ function closeModal(){
           firstName:userFirstName,
           lastName:userLastName,
       });
-      setIsModalOpen(true);
+      showAlert('success');
       setTimeout(()=>{
-        window.location.reload();
-      },2000)
+      window.location.reload();
+      },800);
   
         
         console.log("Document written with ID: ", docRef.id);
@@ -270,10 +298,12 @@ function closeModal(){
         {editBlogDefualtBlog !== '' ? <span>Old Description: <b>{editBlogDefualtBlog}</b></span>: null}
         {edittingErrors.editDescription && <span className="text-red-500">This field is required.</span>}
       </div>
-
-      <button type="submit" className="btn btn-primary w-full">
+{editButtonLoadingCondition ? <button type="submit" className="bg-indigo-600 w-full animate-pulse rounded-md text-white text-xl p-1" disabled>
+        Editing...
+      </button>: <button type="submit" className="bg-indigo-600 w-full rounded-md text-white text-xl p-1">
         Edit
-      </button>
+      </button>}
+      
     </form>
   </div>
   
@@ -328,7 +358,15 @@ function closeModal(){
       >
         Cancel
       </button>
-      <button
+      {deleteButtonLoadingCondition ? <button
+        className=" bg-red-500 text-white hover:bg-red-600 px-4 py-2 rounded-md flex items-center animate-pulse"
+        disabled
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1 animate-pulse" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 13h6m2 9H7a2 2 0 01-2-2V7h14v13a2 2 0 01-2 2zM10 7V5a2 2 0 012-2h0a2 2 0 012 2v2" />
+        </svg>
+        Deleting...
+      </button>: <button
         className=" bg-red-500 text-white hover:bg-red-600 px-4 py-2 rounded-md flex items-center"
         onClick={deleteblog}
       >
@@ -336,7 +374,8 @@ function closeModal(){
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 13h6m2 9H7a2 2 0 01-2-2V7h14v13a2 2 0 01-2 2zM10 7V5a2 2 0 012-2h0a2 2 0 012 2v2" />
         </svg>
         Delete
-      </button>
+      </button>}
+      
     </div>
   </div>
 </dialog>
@@ -496,7 +535,7 @@ function closeModal(){
         <div className="m-3 mt-5  p-2 shadow-md rounded-md">
           <div className="flex justify-between px-[200px] items-center">
 
-          <h1 className="flex items-center space-x-2 text-2xl font-semibold  mb-6 justify-center max-w-xl ml-[100px]">
+{allBlogsOfThisUser.length > 0 ?   <h1 className="flex items-center space-x-2 text-2xl font-semibold  mb-6 justify-center max-w-xl ml-[100px]">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="w-6 h-6"
@@ -512,23 +551,11 @@ function closeModal(){
               />
             </svg>
             <span>My Blogs</span>
-          </h1>
+          </h1> : null }
+        
 
 
-      {isUserPosted ?  <button 
       
-      className="flex items-center space-x-2 p-2 rounded bg-gray-200 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400 mr-[100px]"
-      aria-label="Reload"
-    >
-      {/* Reload Icon */}
-      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582c1.438-3.924 5.792-6.626 10.418-5.835 4.228.707 7.332 4.52 7.332 8.835a9 9 0 01-9 9 9 9 0 01-8.946-7.999M20 4v5h-5"/>
-      </svg>
-
-      {showAimatingMessage ? <span className="animate-bounce">Click to reload and view your new blog.</span> : null}
-      {/* Reload Text */}
-      {showAimatingMessage ? <span className="text-gray-700 text-sm font-bold ">Reload</span> : <span className="text-gray-700 text-xs font-medium">Reload</span>}
-    </button> : null }             
             </div>
           {/* User all blogs */}
           <div>

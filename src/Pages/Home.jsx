@@ -32,6 +32,12 @@ const navigate = useNavigate();
 
   
 
+  function goTosSingleProfile(uid){
+navigate(`/singlepersonprofile/:${uid}`);
+
+  }
+
+
   return (
     <>
       <div className="p-5 px-[100px]">
@@ -46,11 +52,12 @@ const navigate = useNavigate();
                 className="border-[1px] border-[gainsboro] rounded-md shadow-sm p-6 bg-white max-w-2xl mt-5 mb-5 mx-[200px]"
                 key={index}
               >
-                <div className="flex items-center space-x-4">
+                <div className="flex items-center space-x-4"  onClick={() => goTosSingleProfile(item.userUid)}>
                   <img
                     src={item.userImage}
                     alt="Profile"
                     className="w-12 h-12 rounded-md border-[1px] border-gray-400"
+
                   />
                   <div>
                     <h1 className="text-lg font-semibold">{item.title}</h1>

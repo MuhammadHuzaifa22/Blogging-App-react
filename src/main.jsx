@@ -12,6 +12,7 @@ import Home from './Pages/Home.jsx';
 import Settings from './Pages/Settings.jsx';
 import Profile from './Pages/Profile.jsx';
 import SinglePersonPosts from './SinglePersonPosts.jsx';
+import SinglePosterProfile from './Pages/SinglePosterProfile.jsx';
 
 
 
@@ -48,7 +49,9 @@ const router = createBrowserRouter([
       },{
         path:'/singlepersonposts/:uid',
         element:<SinglePersonPosts/>
-  
+      },{
+        path:'/singlepersonprofile/:uid',
+        element:<SinglePosterProfile/>,
       }
     ]
   }
